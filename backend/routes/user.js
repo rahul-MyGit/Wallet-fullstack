@@ -6,6 +6,7 @@ const {User, Account} = require("../db/db");
 const z = require("zod");
 
 const {userMiddleware} = require("../middleware/user");
+const { log } = require("console");
 
 
 
@@ -45,7 +46,7 @@ router.post('/signup', async (req,res)=>{
         const username = req.body.username;
         const password = req.body.password;
 
-        const isExist = await User.exists({username});
+        const isExist = await User.findOne({username});
         if(isExist){
             return res.status(409).json({
                 msg: "Email already taken"
@@ -69,13 +70,13 @@ router.post('/signup', async (req,res)=>{
         const token = jwt.sign({
             userId : newUser._id
         }, JWT_SECRET);
-
-        res.json({
+        
+        return res.json({
             msg: "User Signed up successfully",
             token: token
         });
     
-    }   catch (error) {
+    }catch (error) {
             console.log("Error in database");
             return res.status(500).json({
             msg: "Database error"})
@@ -133,12 +134,12 @@ router.put("/", userMiddleware, async (req,res)=>{
         });
     }
     try {
-        await User.updateOne({_id: req.userId}, req.body);
-
-        res.json({
+        await User.updateOne({ _id: req.userId}, req.body)
+        console.log(req.userId);
+        console.log(req.body);
+        return res.json({
         msg: "Updated successfuly"
     });
-    return;
         
     } catch (error) {
         console.error(error);
@@ -180,13 +181,15 @@ router.get("/bulk", async (req,res)=>{
 })
 
 
-router.get("/",async (req,res)=>{
+router.get("/", userMiddleware, async (req,res)=>{
 
     try {
+
         const user = await User.findOne({
             _id: req.userId
         })
-    
+
+
         res.json({
             email: user.username,
             firstName: user.firstName,
