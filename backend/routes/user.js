@@ -8,7 +8,6 @@ const z = require("zod");
 const {userMiddleware} = require("../middleware/user");
 
 
-
 const signupBody = z.object({
     username : z.string().email(),
     password: z.string().min(5),
@@ -180,7 +179,7 @@ router.get("/bulk", async (req,res)=>{
 })
 
 
-router.get("/",async (req,res)=>{
+router.get("/", userMiddleware ,async (req,res)=>{
 
     try {
         const user = await User.findOne({
