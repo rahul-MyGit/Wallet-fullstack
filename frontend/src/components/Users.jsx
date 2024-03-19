@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "../components/Button";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const Users = ()=>{
     const [state, setState] = useState([]);
@@ -8,12 +9,41 @@ export const Users = ()=>{
 
 
     // debouncing:
-    useEffect(()=>{
-        axios.get("http://localhost:3000/api/v1/user/bulk?filter=" + filter)
-        .then(res=>{
-            setState(res.data.user)
-        })
-    },[filter])
+    useEffect(() => {
+        // Fetch all values initially
+        axios.get("http://localhost:3000/api/v1/user/bulk")
+            .then(res => {
+                setState(res.data.user);
+            })
+            .catch(err => {
+                console.log("Error in fetching users data:", err);
+            });
+    }, []);
+
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            if (filter !== "") {
+                axios.get(`http://localhost:3000/api/v1/user/bulk?filter=${filter}`)
+                    .then(res => {
+                        setState(res.data.user);
+                    })
+                    .catch(err => {
+                        console.log("Error in fetching users data:", err);
+                    });
+            } else {
+                // If filter is empty, fetch all values again
+                axios.get("http://localhost:3000/api/v1/user/bulk")
+                    .then(res => {
+                        setState(res.data.user);
+                    })
+                    .catch(err => {
+                        console.log("Error in fetching users data:", err);
+                    });
+            }
+        }, 500); // Adjust the debounce timeout as needed (e.g., 500 milliseconds)
+
+        return () => clearTimeout(delayDebounce);
+    }, [filter]);
 
     return <>
         <div className="font-bold mt-6 text-lg">
@@ -30,7 +60,7 @@ export const Users = ()=>{
 
 
 function User({user}){
-    
+    const navigate = useNavigate();
     return <div className="flex justify-between">
         <div className="flex">
             <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center mt-1 mr-2">
@@ -46,7 +76,10 @@ function User({user}){
         </div>
 
         <div className="flex flex-col justify-center h-full">
-            <Button label ={"Send Money"} />
+            <Button onClick={()=>{
+                // history.pushState("/send?id=" + user._id + "&name=" + user.firstName);
+                navigate("/send?id=" + user._id + "&name=" + user.firstName); 
+            }} label ={"Send Money"} />
         </div>
     </div> 
 }

@@ -1,8 +1,15 @@
 import { useState } from "react"
+import { useSearchParams } from "react-router-dom";
+import { capitalize } from "lodash";
+import axios from "axios";
 
+// url : localhost:5173/send/id={otherpresonid}&name={rahul}
 export const SendMoney = () => {
 
   const [amount, setAmount] = useState(0);
+  const [params] = useSearchParams()
+  const id = params.get("id");
+  const name = params.get("name");
 
   return <div className="flex justify-center h-screen bg-gray-100">
       <div className="h-full flex flex-col justify-center">
@@ -15,9 +22,9 @@ export const SendMoney = () => {
               <div className="p-6">
               <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-                  <span className="text-2xl text-white">F</span>
+                  <span className="text-2xl text-white">{name[0].toUpperCase()}</span>
                   </div>
-                  <h3 className="text-2xl font-semibold">Friend&apos;s Name</h3>
+                  <h3 className="text-2xl font-semibold">{capitalize(name)}</h3>
               </div>
               <div className="space-y-4">
                   <div className="space-y-2">
@@ -28,13 +35,23 @@ export const SendMoney = () => {
                       Amount (in Rs)
                   </label>
                   <input
+                      onChange={e=>{ setAmount(e.target.value)}}
                       type="number"
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                       id="amount"
                       placeholder="Enter amount"
                   />
                   </div>
-                  <button className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white">
+                  <button onClick={()=>{
+                    axios.post("http://localhost:3000/api/v1/account/transfer", {
+                        to: id,
+                        amount
+                    },{
+                        headers: {
+                            authorization: "Bearer " + localStorage.getItem("token")
+                        }
+                    })
+                  }} className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white">
                       Initiate Transfer
                   </button>
               </div>

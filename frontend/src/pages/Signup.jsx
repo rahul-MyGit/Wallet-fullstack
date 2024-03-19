@@ -5,6 +5,7 @@ import { Button } from "../components/Button";
 import { BottomWarning } from "../components/BottomWarning";
 import { useState } from "react";
 import  axios  from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 export const Signup = ()=>{
@@ -12,6 +13,7 @@ export const Signup = ()=>{
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
 
   return <div className="bg-slate-300 h-screen flex justify-center">
@@ -32,7 +34,8 @@ export const Signup = ()=>{
               password
             });
             localStorage.setItem("token", res.data.token);
-            localStorage.removeItem("token");
+            // localStorage.removeItem("token");
+            navigate("/dashboard");
           }} label={"Sign up"} />
         </div>
         <BottomWarning label={"Already have an account?"} buttonText={"Sign in"} to={"/signin"} />
