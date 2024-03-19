@@ -150,15 +150,21 @@ router.put("/", userMiddleware, async (req,res)=>{
 
 
 
-router.get("/bulk", async (req,res)=>{
+router.get("/bulk", userMiddleware, async (req,res)=>{
     const filter = req.query.filter || "";
     try {
         let allUser = await User.find({
+        $and:[{
             $or:[
                 {firstName:{ "$regex":filter}},
                 {lastName:{  "$regex": filter}}
             ]
-        })
+        },{
+            _id:{
+                $ne: req.userId
+            }
+        }]
+    });
     
         res.json({
             user: allUser.map((user)=>({

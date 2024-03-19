@@ -41,7 +41,35 @@ const accountSchema = new mongoose.Schema({
     balance: {
         type: Number,
         required: true
-    }
+    },
+    fullName: {
+        type: Number,
+        required: true
+    },
+    ledger: [{
+            amount: {
+                type:Number,
+                required: true
+            },
+            date: {
+                type: Date,
+                default: Date.now
+            },
+            toUserId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref:'User'
+            },
+            fromUserId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref:'User'
+            },
+            toUserFullName: {
+                type: String
+            },
+            fromUserFullName: {
+                type: String
+            }
+        }]
 })
 
 
