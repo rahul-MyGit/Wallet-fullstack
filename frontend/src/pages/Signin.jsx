@@ -28,7 +28,8 @@ export const Signin =  ()=> {
             });
             localStorage.setItem("token", res.data.token);
             // localStorage.removeItem("token");
-            navigate("/dashboard");
+            console.log(res.data.id);
+            navigate("/dashboard?id=" + res.data.id);
           }} label={"Sign in"} />
         </div>
         <BottomWarning label={"Don't have an account?"} buttonText={"Sign up"} to={"/signup"}/>

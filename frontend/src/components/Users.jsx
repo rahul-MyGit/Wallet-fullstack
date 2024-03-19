@@ -2,16 +2,21 @@ import { useEffect, useState } from "react"
 import { Button } from "../components/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { capitalize, } from "lodash";
+
 
 export const Users = ()=>{
     const [state, setState] = useState([]);
     const [filter, setFilter] = useState("");
+    const token = localStorage.getItem('token');
 
 
     // debouncing:
     useEffect(() => {
         // Fetch all values initially
-        axios.get("http://localhost:3000/api/v1/user/bulk")
+        axios.get("http://localhost:3000/api/v1/user/bulk",{
+            headers: {authorization: `Bearer ${token}`}
+        })
             .then(res => {
                 setState(res.data.user);
             })
@@ -23,7 +28,9 @@ export const Users = ()=>{
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             if (filter !== "") {
-                axios.get(`http://localhost:3000/api/v1/user/bulk?filter=${filter}`)
+                axios.get(`http://localhost:3000/api/v1/user/bulk?filter=${filter}`,{
+                    headers:{ authorization: `Bearer ${token}`}
+                })
                     .then(res => {
                         setState(res.data.user);
                     })
@@ -32,7 +39,9 @@ export const Users = ()=>{
                     });
             } else {
                 // If filter is empty, fetch all values again
-                axios.get("http://localhost:3000/api/v1/user/bulk")
+                axios.get("http://localhost:3000/api/v1/user/bulk", {
+                    headers: {authorization: `Bearer ${token}`}
+                })
                     .then(res => {
                         setState(res.data.user);
                     })
@@ -70,7 +79,7 @@ function User({user}){
             </div>
             <div className="flex flex-col justify-center h-full">
                 <div>
-                    {user.firstName} {user.lastName}
+                    {capitalize(user.firstName)} {capitalize(user.lastName)}
                 </div>
             </div>
         </div>

@@ -47,7 +47,6 @@ try {
             msg:"Not sufficient fund"
         });
     }
-    console.log("1");
 
     const toAcc = await Account.findOne({
         userId: to
@@ -77,7 +76,7 @@ try {
         }
     }).session(session);
 
- console.log("2");
+
     //--------------------------------------- ledger -----------------------------
     const sender = await User.findOne({_id: req.userId}).session(session);
     const senderName = sender.firstName + " " + sender.lastName;
@@ -110,7 +109,6 @@ try {
     }).session(session)
 
 
-console.log("3");
     // ------------------------------------------------------------------------------------
     await session.commitTransaction();
 

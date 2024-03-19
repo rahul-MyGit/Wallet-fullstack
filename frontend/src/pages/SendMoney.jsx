@@ -1,11 +1,11 @@
 import { useState } from "react"
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { capitalize } from "lodash";
 import axios from "axios";
 
 // url : localhost:5173/send/id={otherpresonid}&name={rahul}
 export const SendMoney = () => {
-
+  const navigate = useNavigate();
   const [amount, setAmount] = useState(0);
   const [params] = useSearchParams()
   const id = params.get("id");
@@ -51,6 +51,7 @@ export const SendMoney = () => {
                             authorization: "Bearer " + localStorage.getItem("token")
                         }
                     })
+                    navigate("/dashboard");
                   }} className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white">
                       Initiate Transfer
                   </button>
