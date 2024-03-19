@@ -1,19 +1,26 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "../components/Button";
+import axios from "axios";
 
 export const Users = ()=>{
-    const [state, setState] = useState([{
-        firstName: "Rahul",
-        LastName: "Gujjar",
-        _id: 1
-    }]);
+    const [state, setState] = useState([]);
+    const [filter, setFilter] = useState("");
+
+
+    // debouncing:
+    useEffect(()=>{
+        axios.get("http://localhost:3000/api/v1/user/bulk?filter=" + filter)
+        .then(res=>{
+            setState(res.data.user)
+        })
+    },[filter])
 
     return <>
         <div className="font-bold mt-6 text-lg">
             Contacts
         </div>
         <div className="my-2">
-            <input type="text" placeholder="Search users ..." className="w-full px-2 py-1 border rounded border-slate-200"/>
+            <input onChange={e=>{setFilter(e.target.value)}} type="text" placeholder="Search users ..." className="w-full px-2 py-1 border rounded border-slate-200"/>
         </div>
         <div>
             {state.map(user => <User user={user} />)}
@@ -33,7 +40,7 @@ function User({user}){
             </div>
             <div className="flex flex-col justify-center h-full">
                 <div>
-                    {user.firstName} {user.LastName}
+                    {user.firstName} {user.lastName}
                 </div>
             </div>
         </div>
